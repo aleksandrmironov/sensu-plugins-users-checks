@@ -30,6 +30,10 @@ require 'sensu-plugin/metric/cli'
 require 'socket'
 
 class LoadStat < Sensu::Plugin::Metric::CLI::Graphite
+  option :scheme,
+         description: 'Metric naming scheme, text to prepend to .$parent.$child',
+         long: '--scheme SCHEME',
+         default: Socket.gethostname.to_s
 
   def run
     result = `who | awk '{print $1}'| sort -u | wc -l`.delete!("\n")
@@ -40,7 +44,7 @@ class LoadStat < Sensu::Plugin::Metric::CLI::Graphite
     }
 
     metrics.each do |key, value|
-      output key, value, timestamp
+      output [config[:scheme], key].join('.'), value, timestamp
     end
     ok
   end
