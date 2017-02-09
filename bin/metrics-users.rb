@@ -32,7 +32,7 @@ require 'socket'
 class LoadStat < Sensu::Plugin::Metric::CLI::Graphite
 
   def run
-    result = `who | awk '{print $1}'| sort -u | wc -l`
+    result = `who | awk '{print $1}'| sort -u | wc -l`.delete!("\n")
 
     timestamp = Time.now.to_i
     metrics = {
